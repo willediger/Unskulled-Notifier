@@ -1,2 +1,1 @@
-# Example
-An example greeter plugin
+A plugin that displays an "not skulled" icon indicating that you are unskulled.
