@@ -8,12 +8,22 @@ import net.runelite.client.config.ConfigItem;
 public interface UnskulledNotifierConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+		keyName = "scale",
+		name = "Scale",
+		description = "Size multiplier that is applied to the overlay icon"
 	)
-	default String greeting()
+	default int scale()
 	{
-		return "Hello";
+		return 1;
+	}
+
+	@ConfigItem(
+		keyName = "revenantCavesOnly",
+		name = "Revenant caves only",
+		description = "Only show the overlay while you are inside the Revenant Caves"
+	)
+	default boolean revenantCavesOnly()
+	{
+		return false;
 	}
 }
