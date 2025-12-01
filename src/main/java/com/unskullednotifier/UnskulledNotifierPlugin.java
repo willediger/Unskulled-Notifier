@@ -43,12 +43,9 @@ public class UnskulledNotifierPlugin extends Plugin
 	@Inject
 	private UnskulledNotifierConfig config;
 
-	private boolean revenantCavesOnly;
-
 	@Override
 	protected void startUp()
 	{
-		updateConfig();
 		overlayManager.add(overlay);
 	}
 
@@ -65,13 +62,29 @@ public class UnskulledNotifierPlugin extends Plugin
 			return false;
 		}
 
+		if (!isInterfaceVisible())
+		{
+			return false;
+		}
+
+		return !config.revenantCavesOnly() || isInRevenantCaves();
+	}
+
+	private boolean isInterfaceVisible()
+	{
 		Widget welcomeScreen = client.getWidget(WidgetInfo.LOGIN_CLICK_TO_PLAY_SCREEN);
 		if (welcomeScreen != null && !welcomeScreen.isHidden())
 		{
 			return false;
 		}
 
-		return !revenantCavesOnly || isInRevenantCaves();
+		Widget fixedViewport = client.getWidget(WidgetInfo.FIXED_VIEWPORT);
+		Widget resizableClassic = client.getWidget(WidgetInfo.RESIZABLE_VIEWPORT_OLD_SCHOOL_BOX);
+		Widget resizableModern = client.getWidget(WidgetInfo.RESIZABLE_VIEWPORT_BOTTOM_LINE);
+
+		return (fixedViewport != null && !fixedViewport.isHidden())
+			|| (resizableClassic != null && !resizableClassic.isHidden())
+			|| (resizableModern != null && !resizableModern.isHidden());
 	}
 
 	private boolean isPlayerUnskulled()
@@ -106,16 +119,9 @@ public class UnskulledNotifierPlugin extends Plugin
 			return;
 		}
 
-		updateConfig();
-
 		if (event.getKey().equals("scale"))
 		{
 			overlay.updateConfig();
 		}
-	}
-
-	private void updateConfig()
-	{
-		revenantCavesOnly = config.revenantCavesOnly();
 	}
 }
