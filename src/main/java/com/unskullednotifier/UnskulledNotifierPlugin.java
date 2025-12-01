@@ -8,6 +8,8 @@ import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.SkullIcon;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -59,6 +61,12 @@ public class UnskulledNotifierPlugin extends Plugin
 	boolean shouldShowOverlay()
 	{
 		if (!isPlayerUnskulled())
+		{
+			return false;
+		}
+
+		Widget welcomeScreen = client.getWidget(WidgetInfo.LOGIN_CLICK_TO_PLAY_SCREEN);
+		if (welcomeScreen != null && !welcomeScreen.isHidden())
 		{
 			return false;
 		}
