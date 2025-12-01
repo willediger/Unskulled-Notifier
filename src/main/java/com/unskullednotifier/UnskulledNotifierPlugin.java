@@ -8,8 +8,8 @@ import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.SkullIcon;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -72,15 +72,15 @@ public class UnskulledNotifierPlugin extends Plugin
 
 	private boolean isInterfaceVisible()
 	{
-		Widget welcomeScreen = client.getWidget(WidgetInfo.LOGIN_CLICK_TO_PLAY_SCREEN);
+		Widget welcomeScreen = client.getWidget(InterfaceID.WELCOME_SCREEN, 0);
 		if (welcomeScreen != null && !welcomeScreen.isHidden())
 		{
 			return false;
 		}
 
-		Widget fixedViewport = client.getWidget(WidgetInfo.FIXED_VIEWPORT);
-		Widget resizableClassic = client.getWidget(WidgetInfo.RESIZABLE_VIEWPORT_OLD_SCHOOL_BOX);
-		Widget resizableModern = client.getWidget(WidgetInfo.RESIZABLE_VIEWPORT_BOTTOM_LINE);
+		Widget fixedViewport = client.getWidget(InterfaceID.Toplevel.OVERLAY_HUD);
+		Widget resizableClassic = client.getWidget(InterfaceID.ToplevelOsrsStretch.HUD_CONTAINER_FRONT);
+		Widget resizableModern = client.getWidget(InterfaceID.ToplevelPreEoc.HUD_CONTAINER_FRONT);
 
 		return (fixedViewport != null && !fixedViewport.isHidden())
 			|| (resizableClassic != null && !resizableClassic.isHidden())
