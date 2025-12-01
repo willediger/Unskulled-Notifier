@@ -2,8 +2,6 @@ package com.unskullednotifier;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import javax.inject.Inject;
 import net.runelite.client.ui.overlay.Overlay;
@@ -18,7 +16,7 @@ class UnskulledNotifierOverlay extends Overlay
 	private final UnskulledNotifierPlugin plugin;
 	private final UnskulledNotifierConfig config;
 	private final BufferedImage baseIcon;
-	private final ScaledImage cachedIcon = new ScaledImage();
+	private BufferedImage icon;
 
 	@Inject
 	private UnskulledNotifierOverlay(UnskulledNotifierPlugin plugin, UnskulledNotifierConfig config)
@@ -32,8 +30,7 @@ class UnskulledNotifierOverlay extends Overlay
 		setPriority(OverlayPriority.HIGH);
 
 		this.baseIcon = loadIcon();
-		this.cachedIcon.scale = -1;
-		this.cachedIcon.scaledImage = baseIcon;
+		updateConfig();
 	}
 
 	@Override
@@ -44,30 +41,13 @@ class UnskulledNotifierOverlay extends Overlay
 			return null;
 		}
 
-		BufferedImage scaledIcon = getScaledIcon();
-		return new ImageComponent(scaledIcon).render(graphics);
+		return new ImageComponent(icon).render(graphics);
 	}
 
-	private BufferedImage getScaledIcon()
+	public void updateConfig()
 	{
 		int scale = Math.max(1, config.scale());
-		if (cachedIcon.scale == scale && cachedIcon.scaledImage != null)
-		{
-			return cachedIcon.scaledImage;
-		}
-
-		BufferedImage scaled = new BufferedImage(
-			baseIcon.getWidth() * scale,
-			baseIcon.getHeight() * scale,
-			BufferedImage.TYPE_INT_ARGB);
-
-		AffineTransform transform = AffineTransform.getScaleInstance(scale, scale);
-		AffineTransformOp scaleOp = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
-		scaleOp.filter(baseIcon, scaled);
-
-		cachedIcon.scale = scale;
-		cachedIcon.scaledImage = scaled;
-		return scaled;
+		icon = ImageUtil.resizeImage(baseIcon, baseIcon.getWidth() * scale, baseIcon.getHeight() * scale);
 	}
 
 	private static BufferedImage loadIcon()
@@ -79,11 +59,5 @@ class UnskulledNotifierOverlay extends Overlay
 		}
 
 		return icon;
-	}
-
-	private static final class ScaledImage
-	{
-		private int scale;
-		private BufferedImage scaledImage;
 	}
 }

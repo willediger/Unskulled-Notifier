@@ -9,6 +9,8 @@ import net.runelite.api.Player;
 import net.runelite.api.SkullIcon;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -39,9 +41,12 @@ public class UnskulledNotifierPlugin extends Plugin
 	@Inject
 	private UnskulledNotifierConfig config;
 
+	private boolean revenantCavesOnly;
+
 	@Override
 	protected void startUp()
 	{
+		updateConfig();
 		overlayManager.add(overlay);
 	}
 
@@ -58,7 +63,7 @@ public class UnskulledNotifierPlugin extends Plugin
 			return false;
 		}
 
-		return !config.revenantCavesOnly() || isInRevenantCaves();
+		return !revenantCavesOnly || isInRevenantCaves();
 	}
 
 	private boolean isPlayerUnskulled()
@@ -83,5 +88,26 @@ public class UnskulledNotifierPlugin extends Plugin
 	UnskulledNotifierConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(UnskulledNotifierConfig.class);
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals("unskullednotifier"))
+		{
+			return;
+		}
+
+		updateConfig();
+
+		if (event.getKey().equals("scale"))
+		{
+			overlay.updateConfig();
+		}
+	}
+
+	private void updateConfig()
+	{
+		revenantCavesOnly = config.revenantCavesOnly();
 	}
 }
