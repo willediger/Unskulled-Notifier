@@ -46,6 +46,7 @@ public class UnskulledNotifierPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
+		overlay.updateConfig();
 		overlayManager.add(overlay);
 	}
 
